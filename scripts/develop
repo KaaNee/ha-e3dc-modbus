@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Run a real Home Assistant instance with this integration loaded, config in
+# ./config/ (gitignored). First run creates a minimal configuration.yaml
+# with debug logging for this integration turned on.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+mkdir -p config
+ln -sfn "$(pwd)/custom_components" config/custom_components
+
+if [ ! -f config/configuration.yaml ]; then
+  cat > config/configuration.yaml <<'EOF'
+default_config:
+
+logger:
+  default: info
+  logs:
+    custom_components.e3dc_modbus: debug
+EOF
+fi
+
+hass -c config

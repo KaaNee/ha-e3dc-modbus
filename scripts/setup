@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Install everything needed to develop and test this integration.
+# Prerequisite: e3dc-modbus cloned as a sibling directory (../e3dc-modbus) —
+# see requirements_test.txt.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if [ ! -d ../e3dc-modbus ]; then
+  echo "error: ../e3dc-modbus not found — clone it as a sibling of this repo first" >&2
+  exit 1
+fi
+
+python3 -m pip install --upgrade pip
+pip install -r requirements_test.txt -r requirements_dev.txt

@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Connect to your E3DC Hauskraftwerk's Modbus/TCP interface. Enable Modbus in the device's own menu first (Hauptmenü → Smart-Funktionen → Smart Home → Modbus), protocol \"E3DC\".",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit ID"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the E3DC device.",
+          "port": "Modbus TCP port configured on the device (usually 502).",
+          "unit_id": "Modbus device/unit ID shown in the device's Modbus menu (usually 1)."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the device. Check host/port and that Modbus is enabled on the device.",
+      "unsupported_model": "This E3DC model isn't supported yet. Please open an issue with the model name from the device's info screen."
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "pv_power": { "name": "PV power" },
+      "battery_power": { "name": "Battery power" },
+      "household_power": { "name": "Household power" },
+      "grid_power": { "name": "Grid power" },
+      "grid_import_power": { "name": "Grid import power" },
+      "grid_export_power": { "name": "Grid export power" },
+      "battery_charge_power": { "name": "Battery charge power" },
+      "battery_discharge_power": { "name": "Battery discharge power" },
+      "external_power": { "name": "External power" },
+      "wallbox_power": { "name": "Wallbox power" },
+      "wallbox_pv_power": { "name": "Wallbox PV power" },
+      "battery_soc": { "name": "Battery state of charge" },
+      "autarky": { "name": "Autarky" },
+      "self_consumption": { "name": "Self-consumption" },
+      "powermeter_l1": { "name": "Grid meter power L1" },
+      "powermeter_l2": { "name": "Grid meter power L2" },
+      "powermeter_l3": { "name": "Grid meter power L3" },
+      "string_voltage": { "name": "String {index} voltage" },
+      "string_current": { "name": "String {index} current" },
+      "string_power": { "name": "String {index} power" },
+      "emergency_power_status": {
+        "name": "Emergency power status",
+        "state": {
+          "not_supported": "Not supported",
+          "active": "Active",
+          "inactive": "Inactive",
+          "unavailable": "Unavailable",
+          "wrong_switch_position": "Wrong switch position"
+        }
+      },
+      "sg_ready_state": {
+        "name": "SG-Ready state",
+        "state": {
+          "locked": "Locked",
+          "normal": "Normal operation",
+          "pv_surplus": "PV surplus operation",
+          "curtailed": "Forced curtailment"
+        }
+      }
+    },
+    "binary_sensor": {
+      "battery_charging_lock": { "name": "Battery charging locked" },
+      "battery_discharging_lock": { "name": "Battery discharging locked" },
+      "emergency_power_possible": { "name": "Emergency power possible" },
+      "weather_predicted_charging": { "name": "Weather-based charging hold" },
+      "regulation_status": { "name": "Feed-in curtailed" },
+      "charge_lock_time": { "name": "Charge lock time active" },
+      "discharge_lock_time": { "name": "Discharge lock time active" }
+    },
+    "switch": {
+      "wallbox_sunmode": { "name": "Wallbox {index} solar-only mode" },
+      "wallbox_charging_aborted": { "name": "Wallbox {index} charging aborted" },
+      "wallbox_schuko_on": { "name": "Wallbox {index} Schuko socket" },
+      "wallbox_one_phase_charging": { "name": "Wallbox {index} single-phase charging" }
+    }
+  }
+}

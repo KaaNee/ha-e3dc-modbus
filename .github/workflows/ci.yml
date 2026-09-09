@@ -1,0 +1,33 @@
+# Checks out this repo and its e3dc-modbus dependency as sibling directories
+# (requirements_test.txt references it via "-e ../e3dc-modbus"), matching
+# local dev layout. Only works once both repos are on GitHub — adjust the
+# "repository:" owner if it moves.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ha-e3dc-modbus
+      - uses: actions/checkout@v4
+        with:
+          repository: kneuhaus/e3dc-modbus
+          path: e3dc-modbus
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - working-directory: ha-e3dc-modbus
+        run: python -m pip install -r requirements_test.txt -r requirements_dev.txt
+      - working-directory: ha-e3dc-modbus
+        run: ruff check .
+      - working-directory: ha-e3dc-modbus
+        run: ruff format --check .
+      - working-directory: ha-e3dc-modbus
+        run: pytest

@@ -1,0 +1,34 @@
+{
+  "entity": {
+    "sensor": {
+      "autarky": { "default": "mdi:home-battery" },
+      "self_consumption": { "default": "mdi:home-import-outline" },
+      "powermeter_l1": { "default": "mdi:meter-electric" },
+      "powermeter_l2": { "default": "mdi:meter-electric" },
+      "powermeter_l3": { "default": "mdi:meter-electric" },
+      "emergency_power_status": { "default": "mdi:home-lightning-bolt-outline" },
+      "sg_ready_state": { "default": "mdi:transmission-tower" }
+    },
+    "binary_sensor": {
+      "battery_charging_lock": {
+        "default": "mdi:battery-lock",
+        "state": { "on": "mdi:battery-lock", "off": "mdi:battery-lock-open" }
+      },
+      "battery_discharging_lock": {
+        "default": "mdi:battery-lock",
+        "state": { "on": "mdi:battery-lock", "off": "mdi:battery-lock-open" }
+      },
+      "emergency_power_possible": { "default": "mdi:home-lightning-bolt" },
+      "weather_predicted_charging": { "default": "mdi:weather-partly-cloudy" },
+      "regulation_status": { "default": "mdi:transmission-tower-off" },
+      "charge_lock_time": { "default": "mdi:timer-lock-outline" },
+      "discharge_lock_time": { "default": "mdi:timer-lock-outline" }
+    },
+    "switch": {
+      "wallbox_sunmode": { "default": "mdi:white-balance-sunny" },
+      "wallbox_charging_aborted": { "default": "mdi:ev-plug-type2" },
+      "wallbox_schuko_on": { "default": "mdi:power-socket-de" },
+      "wallbox_one_phase_charging": { "default": "mdi:sine-wave" }
+    }
+  }
+}

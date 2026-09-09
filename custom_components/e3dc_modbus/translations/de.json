@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Verbindung zur Modbus/TCP-Schnittstelle des E3DC Hauskraftwerks herstellen. Modbus vorher im Gerätemenü aktivieren (Hauptmenü → Smart-Funktionen → Smart Home → Modbus), Protokoll \"E3DC\".",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit-ID"
+        },
+        "data_description": {
+          "host": "IP-Adresse oder Hostname des E3DC-Geräts.",
+          "port": "Am Gerät eingestellter Modbus-TCP-Port (üblicherweise 502).",
+          "unit_id": "Modbus-Geräte-/Unit-ID aus dem Modbus-Menü des Geräts (üblicherweise 1)."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Gerät nicht erreichbar. Host/Port prüfen und ob Modbus am Gerät aktiviert ist.",
+      "unsupported_model": "Dieses E3DC-Modell wird noch nicht unterstützt. Bitte ein Issue mit dem Modellnamen aus dem Info-Bildschirm des Geräts erstellen."
+    },
+    "abort": {
+      "already_configured": "Dieses Gerät ist bereits eingerichtet."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "pv_power": { "name": "PV-Leistung" },
+      "battery_power": { "name": "Batterieleistung" },
+      "household_power": { "name": "Hausverbrauchsleistung" },
+      "grid_power": { "name": "Netzleistung" },
+      "grid_import_power": { "name": "Netzbezugsleistung" },
+      "grid_export_power": { "name": "Netzeinspeiseleistung" },
+      "battery_charge_power": { "name": "Batterieladeleistung" },
+      "battery_discharge_power": { "name": "Batterieentladeleistung" },
+      "external_power": { "name": "Leistung zusätzlicher Einspeiser" },
+      "wallbox_power": { "name": "Wallbox-Leistung" },
+      "wallbox_pv_power": { "name": "Wallbox-Solarleistung" },
+      "battery_soc": { "name": "Batterieladestand" },
+      "autarky": { "name": "Autarkie" },
+      "self_consumption": { "name": "Eigenverbrauch" },
+      "powermeter_l1": { "name": "Netzzähler-Leistung L1" },
+      "powermeter_l2": { "name": "Netzzähler-Leistung L2" },
+      "powermeter_l3": { "name": "Netzzähler-Leistung L3" },
+      "string_voltage": { "name": "String {index} Spannung" },
+      "string_current": { "name": "String {index} Strom" },
+      "string_power": { "name": "String {index} Leistung" },
+      "emergency_power_status": {
+        "name": "Notstrom-Status",
+        "state": {
+          "not_supported": "Nicht unterstützt",
+          "active": "Aktiv",
+          "inactive": "Inaktiv",
+          "unavailable": "Nicht verfügbar",
+          "wrong_switch_position": "Motorschalter falsche Position"
+        }
+      },
+      "sg_ready_state": {
+        "name": "SG-Ready-Status",
+        "state": {
+          "locked": "Sperrbetrieb",
+          "normal": "Normalbetrieb",
+          "pv_surplus": "PV-Überschussbetrieb",
+          "curtailed": "Betrieb für Abriegelung"
+        }
+      }
+    },
+    "binary_sensor": {
+      "battery_charging_lock": { "name": "Batterieladen gesperrt" },
+      "battery_discharging_lock": { "name": "Batterieentladen gesperrt" },
+      "emergency_power_possible": { "name": "Notstrom möglich" },
+      "weather_predicted_charging": { "name": "Wetterbasiertes Laden aktiv" },
+      "regulation_status": { "name": "Einspeisung abgeregelt" },
+      "charge_lock_time": { "name": "Ladesperrzeit aktiv" },
+      "discharge_lock_time": { "name": "Entladesperrzeit aktiv" }
+    },
+    "switch": {
+      "wallbox_sunmode": { "name": "Wallbox {index} Solarbetrieb" },
+      "wallbox_charging_aborted": { "name": "Wallbox {index} Laden abgebrochen" },
+      "wallbox_schuko_on": { "name": "Wallbox {index} Schukosteckdose" },
+      "wallbox_one_phase_charging": { "name": "Wallbox {index} einphasiges Laden" }
+    }
+  }
+}

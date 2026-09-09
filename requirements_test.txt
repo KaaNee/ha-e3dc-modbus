@@ -1,0 +1,10 @@
+# Test dependencies. Install with: pip install -r requirements_test.txt
+#
+# e3dc-modbus is installed from a sibling directory, not from PyPI (it isn't
+# published there yet — see README). Clone it next to this repo:
+#   git clone <e3dc-modbus repo url> ../e3dc-modbus
+-e ../e3dc-modbus
+
+homeassistant==2026.9.1
+pytest-homeassistant-custom-component
+pymodbus>=3.7  # homeassistant.components.modbus's own dependency; needed at import time
