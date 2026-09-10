@@ -11,6 +11,10 @@ Python, kein HA-Bezug, eigenes Repo) und
 Verbindungs-Framework.
 
 > [!NOTE]
+> Dieses Repository ist mit Unterstützung von KI (Claude Code) entstanden — Integration,
+> Tests und Doku wurden gegen eine echte Home-Assistant-Instanz und echte Hardware verifiziert.
+
+> [!NOTE]
 > Gegen ein echtes E3DC S10 X Compact verifiziert (siehe `e3dc-modbus`s README). Wallbox-
 > Schreibzugriffe sind unverifiziert — siehe `custom_components/e3dc_modbus/switch.py`.
 
