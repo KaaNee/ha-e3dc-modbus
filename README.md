@@ -20,16 +20,10 @@ Verbindungs-Framework.
 
 ## Installation
 
-**Voraussetzung:** In `e3dc-modbus` ist noch nicht auf PyPI veröffentlicht. `manifest.json`
-verweist auf `e3dc-modbus==0.0.2`, was aktuell **fehlschlägt**, sobald HA versucht, es zu
-installieren. Bis zur Veröffentlichung:
+`e3dc-modbus` ist auf [PyPI](https://pypi.org/project/e3dc-modbus/) veröffentlicht — HA
+installiert es automatisch über `manifest.json`s `requirements`, kein manueller Schritt nötig.
 
-```bash
-# im venv der HA-Instanz
-pip install -e /pfad/zu/e3dc-modbus
-```
-
-Danach als HACS Custom Repository (`Integration`, dieses Verzeichnis) hinzufügen, oder
+Als HACS Custom Repository (`Integration`, dieses Verzeichnis) hinzufügen, oder
 `custom_components/e3dc_modbus/` manuell nach `<config>/custom_components/` kopieren.
 
 **Am Gerät:** Hauptmenü → Smart-Funktionen → Smart Home → Modbus aktivieren, Protokoll
@@ -146,13 +140,10 @@ Entity-States danach.
 - **Wallbox-Schreibpfad unverifiziert.** E3DCs Doku verlangt Modbus-Funktion 05H für
   Bit-Schreibzugriffe, `modbus_connection`s `bit()`-Feld schreibt aber per 06H. Ohne echte
   Wallbox nicht zu klären — Rückmeldungen willkommen.
-- **`e3dc-modbus` noch nicht auf PyPI** — siehe Installation oben. `manifest.json`s
-  `requirements` referenziert `e3dc-modbus==0.0.2`, was bei einer echten HA-Installation
-  fehlschlägt, bis das Paket veröffentlicht ist (oder die Requirement-Zeile auf eine
-  Git-URL umgestellt wird).
-- **`.github/workflows/ci.yml`/`validate.yml` setzen ein GitHub-Repo voraus** (der
-  `e3dc-modbus`-Checkout in `ci.yml`, hassfest/HACS in `validate.yml`) — funktionieren nicht
-  auf Gitea. Vor dem GitHub-Umzug lokal mit `pytest`/`scripts/lint` prüfen.
+- **`.github/workflows/ci.yml`/`validate.yml` laufen nur auf GitHub** (der
+  `e3dc-modbus`-Checkout in `ci.yml`, hassfest/HACS in `validate.yml`) — der Gitea-Spiegel
+  dieses Repos hat keine laufende CI. Bei Änderungen dort lokal mit `pytest`/`scripts/lint`
+  prüfen.
 - Nur S10 X Compact real getestet. Weitere Modelle: Modellprofil in `e3dc-modbus`s
   `models/` ergänzen, hier ändert sich nichts.
 
