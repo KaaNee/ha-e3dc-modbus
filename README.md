@@ -43,45 +43,44 @@ Entity-Einstellungen aktivierbar.
 
 ## Energy Dashboard einrichten
 
-HA's Energy Dashboard braucht **Energie**-Sensoren (kWh, stetig steigend), keine
-Leistungssensoren (W) — die liefert diese Integration nicht direkt, weil E3DC selbst keine
-Lifetime-Zähler-Register hat. Für Netz und Batterie kommt dazu: das Dashboard will Bezug und
-Einspeisung (bzw. Laden und Entladen) als **getrennte** Werte, nicht ein Signal mit
-Vorzeichen. Deshalb gibt es hier vier zusätzliche, bereits vorzeichen-getrennte Leistungssensoren:
-`grid_import_power`, `grid_export_power`, `battery_charge_power`, `battery_discharge_power`.
+Die Integration liefert nur Momentanleistung in Watt, keine kWh — E3DC hat dafür keine
+Zähler-Register im Gerät. Für Netz und Batterie sind deshalb vier vorzeichen-getrennte
+Leistungssensoren dabei (`grid_import_power`, `grid_export_power`, `battery_charge_power`,
+`battery_discharge_power`), weil das Energy Dashboard Bezug/Einspeisung bzw. Laden/Entladen
+getrennt haben will statt eines einzelnen Werts mit Vorzeichen.
 
-Fehlender letzter Schritt — Leistung (W) zu Energie (kWh) — ist reine HA-Bordmittel, kein
-Code nötig:
+Die Umrechnung in kWh übernimmt Home Assistants eigener Helfer:
 
 1. **Einstellungen → Geräte & Dienste → Helfer → Helfer erstellen → Integralsensor**
-   (= Riemann-Summe). Für jede Größe einen Helfer anlegen, Eingangssensor auf den
-   passenden Leistungssensor, **Metrisches Präfix: k (kilo)** (sonst kommt Wh statt kWh
+   (Riemann-Summe). Leg für jede der fünf Größen einen Helfer an, Eingangssensor jeweils auf
+   den passenden Leistungssensor, **Metrisches Präfix: k (kilo)** (sonst kommt Wh statt kWh
    raus), Zeiteinheit: Stunden:
    - PV-Leistung → *E3DC PV-Erzeugung*
    - Netzbezugsleistung → *E3DC Netzbezug*
    - Netzeinspeiseleistung → *E3DC Netzeinspeisung*
    - Batterieladeleistung → *E3DC Batterie Laden*
    - Batterieentladeleistung → *E3DC Batterie Entladen*
-2. **Einstellungen → Dashboards → Energie**: die fünf neuen Helfer-Sensoren bei
+2. **Einstellungen → Dashboards → Energie**: die fünf neuen Helfer bei
    „Stromnetz“/„PV-Module“/„Heimspeicher“ eintragen (jeweils als „Aus dem Netz bezogene
    Energie“/„In das Netz eingespeiste Energie“ bzw. „Aus der Batterie entladene/In die
    Batterie geladene Energie“).
-3. **Für Echtzeit-Leistungsanzeige** (nicht nur Tages-kWh): in denselben Dialogen bei
-   „Art der Leistungsmessung“ **„Zwei Sensoren“** wählen — nicht „Standard“, das ist für
-   einen einzelnen signed Sensor gedacht. Die vorzeichen-getrennten Leistungssensoren
-   passen direkt hinein:
+3. Für Echtzeit-Leistung (nicht nur Tages-kWh) in denselben Dialogen bei „Art der
+   Leistungsmessung“ **„Zwei Sensoren“** wählen — nicht „Standard“, das ist für einen
+   einzelnen signed Sensor gedacht:
    - Netzanschluss: Netzbezugsleistung → *Netzbezugsleistung*, Netzeinspeiseleistung →
      *Netzeinspeiseleistung*
    - Heimspeicher: Entladeleistung → *Batterieentladeleistung*, Ladeleistung →
      *Batterieladeleistung*
-4. Kann nach dem Anlegen bis zu ein paar Minuten dauern, bis die Statistik-Metadaten stehen
-   (HA zeigt dazu eine gelbe, harmlose Warnung) — kein Fehler.
 
-**Warum keine fertigen kWh-Sensoren direkt aus der Integration?** Bewusste Entscheidung,
-passend zum Vorgehen vergleichbarer Integrationen (SolarEdge, Anker Solix): eigene
-Akkumulation in der Integration ist riskant (Historie bricht bei Änderungen, Wertspitzen
-korrumpieren Statistiken) — HA's Integral-Helfer entkoppelt die Statistik davon und macht
-genau das schon zuverlässig.
+> [!TIP]
+> Direkt nach dem Anlegen der Helfer zeigt HA kurz eine gelbe Warnung, dass Statistik-Daten
+> fehlen — das legt sich nach ein paar Minuten von selbst, kein Fehler.
+
+**Warum keine fertigen kWh-Sensoren direkt aus der Integration?** Hätte den Umweg über die
+Helfer erspart, aber eine eigene Zählung im Code müsste bei jedem Neustart sauber
+weiterlaufen und würde bei einem Update der Integration leicht die Statistik-Historie
+durcheinanderbringen. Der HA-Helfer macht genau das schon zuverlässig — andere
+Integrationen wie SolarEdge oder Anker Solix machen es aus demselben Grund genauso.
 
 ## Bekannte Einschränkungen
 
