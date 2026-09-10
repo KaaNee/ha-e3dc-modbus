@@ -5,7 +5,7 @@ HACS-Integration für E3DC-Hauskraftwerke über Modbus/TCP. Ersetzt die klassisc
 Modbus-Verbindung (`homeassistant.components.modbus`, HA 2026.9+ "Modernizing Modbus")
 statt eigenem Socket.
 
-Nutzt [`e3dc-modbus`](https://github.com/kneuhaus/e3dc-modbus) als Device Library (reines
+Nutzt [`e3dc-modbus`](https://github.com/KaaNee/e3dc-modbus) als Device Library (reines
 Python, kein HA-Bezug, eigenes Repo) und
 [`modbus-connection`](https://home-assistant-libs.github.io/modbus-connection/) als
 Verbindungs-Framework.

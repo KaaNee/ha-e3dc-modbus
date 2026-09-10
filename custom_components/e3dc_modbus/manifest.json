@@ -1,13 +1,13 @@
 {
   "domain": "e3dc_modbus",
   "name": "E3DC (Modbus)",
-  "codeowners": ["@kneuhaus"],
+  "codeowners": ["@KaaNee"],
   "config_flow": true,
   "dependencies": ["modbus"],
-  "documentation": "https://github.com/kneuhaus/ha-e3dc-modbus",
+  "documentation": "https://github.com/KaaNee/ha-e3dc-modbus",
   "integration_type": "device",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/kneuhaus/ha-e3dc-modbus/issues",
+  "issue_tracker": "https://github.com/KaaNee/ha-e3dc-modbus/issues",
   "requirements": ["e3dc-modbus==0.0.2", "modbus-connection>=4.11,<5"],
   "version": "0.1.0"
 }

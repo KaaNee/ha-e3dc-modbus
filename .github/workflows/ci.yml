@@ -18,7 +18,7 @@ jobs:
           path: ha-e3dc-modbus
       - uses: actions/checkout@v4
         with:
-          repository: kneuhaus/e3dc-modbus
+          repository: KaaNee/e3dc-modbus
           path: e3dc-modbus
       - uses: actions/setup-python@v5
         with:

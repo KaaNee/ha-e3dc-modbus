@@ -9,7 +9,7 @@
 
 ## Neues E3DC-Modell hinzufügen
 
-Betrifft nur [`e3dc-modbus`](https://github.com/kneuhaus/e3dc-modbus), nicht dieses Repo: neue
+Betrifft nur [`e3dc-modbus`](https://github.com/KaaNee/e3dc-modbus), nicht dieses Repo: neue
 Datei unter `e3dc_modbus/models/`, siehe `models/s10_x_compact.py` als Vorlage. Diese
 Integration merkt davon nichts.
 
