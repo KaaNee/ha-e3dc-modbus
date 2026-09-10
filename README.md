@@ -1,37 +1,30 @@
 # E3DC (Modbus) – Home Assistant Custom Component
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=KaaNee&repository=ha-e3dc-modbus&category=integration)
+
 HACS-Integration für E3DC-Hauskraftwerke über Modbus/TCP. Ersetzt die klassische
 `modbus:`-YAML-Konfiguration durch Config Flow, echte Entities/Devices und eine geteilte
 Modbus-Verbindung (`homeassistant.components.modbus`, HA 2026.9+ "Modernizing Modbus")
 statt eigenem Socket.
 
-Nutzt [`e3dc-modbus`](https://github.com/KaaNee/e3dc-modbus) als Device Library (reines
-Python, kein HA-Bezug, eigenes Repo) und
+Nutzt [`e3dc-modbus`](https://github.com/KaaNee/e3dc-modbus) als Device Library und
 [`modbus-connection`](https://home-assistant-libs.github.io/modbus-connection/) als
 Verbindungs-Framework.
 
 > [!NOTE]
-> Dieses Repository ist mit Unterstützung von KI (Claude Code) entstanden — Integration,
-> Tests und Doku wurden gegen eine echte Home-Assistant-Instanz und echte Hardware verifiziert.
-
-> [!NOTE]
-> Gegen ein echtes E3DC S10 X Compact verifiziert (siehe `e3dc-modbus`s README). Wallbox-
-> Schreibzugriffe sind unverifiziert — siehe `custom_components/e3dc_modbus/switch.py`.
+> Gegen ein echtes E3DC S10 X Compact verifiziert. Wallbox-Schreibzugriffe sind
+> unverifiziert — siehe „Bekannte Einschränkungen“ unten.
 
 ## Installation
 
-`e3dc-modbus` ist auf [PyPI](https://pypi.org/project/e3dc-modbus/) veröffentlicht — HA
-installiert es automatisch über `manifest.json`s `requirements`, kein manueller Schritt nötig.
-
-Als HACS Custom Repository (`Integration`, dieses Verzeichnis) hinzufügen, oder
+Über den Button oben als HACS Custom Repository hinzufügen (Kategorie „Integration“), oder
 `custom_components/e3dc_modbus/` manuell nach `<config>/custom_components/` kopieren.
 
 **Am Gerät:** Hauptmenü → Smart-Funktionen → Smart Home → Modbus aktivieren, Protokoll
 `E3DC` wählen (nicht `SUN_SPEC`).
 
 **In HA:** Einstellungen → Geräte & Dienste → Integration hinzufügen → „E3DC (Modbus)“.
-Host, Port (Standard 502), Unit-ID (Standard 1) eingeben — Verbindung wird sofort geprüft
-(`async_get_temporary_unit`, siehe `config_flow.py`).
+Host, Port (Standard 502), Unit-ID (Standard 1) eingeben — Verbindung wird sofort geprüft.
 
 ## Entities
 
@@ -42,8 +35,7 @@ Host, Port (Standard 502), Unit-ID (Standard 1) eingeben — Verbindung wird sof
 | `switch` | Pro Wallbox (0-7): Solarbetrieb, Laden abbrechen, Schuko an, einphasig laden | `switch.py` |
 
 Keine Energie-Sensoren (kWh) direkt vom Gerät: E3DC hat keine nativen Lifetime-Zähler-Register
-(siehe `e3dc-modbus`s const.py) — alles hier sind Momentanleistungen (W). Für's Energy Dashboard
-siehe unten.
+— alles hier sind Momentanleistungen (W). Für's Energy Dashboard siehe unten.
 
 String 3 (unbenutzt auf diesem Gerätetyp lt. E3DC-Doku) und die Wallbox-Power-Sensoren
 (nur relevant mit Wallbox) sind standardmäßig **deaktiviert**, aber vorhanden — in den
@@ -55,10 +47,8 @@ HA's Energy Dashboard braucht **Energie**-Sensoren (kWh, stetig steigend), keine
 Leistungssensoren (W) — die liefert diese Integration nicht direkt, weil E3DC selbst keine
 Lifetime-Zähler-Register hat. Für Netz und Batterie kommt dazu: das Dashboard will Bezug und
 Einspeisung (bzw. Laden und Entladen) als **getrennte** Werte, nicht ein Signal mit
-Vorzeichen. Deshalb gibt es hier vier zusätzliche, bereits vorzeichen-getrennte Leistungssensoren
-(`grid_import_power`, `grid_export_power`, `battery_charge_power`, `battery_discharge_power`) —
-die alte YAML-Config hat genau das über Template-Sensoren gelöst, hier ist es Teil der
-Integration.
+Vorzeichen. Deshalb gibt es hier vier zusätzliche, bereits vorzeichen-getrennte Leistungssensoren:
+`grid_import_power`, `grid_export_power`, `battery_charge_power`, `battery_discharge_power`.
 
 Fehlender letzter Schritt — Leistung (W) zu Energie (kWh) — ist reine HA-Bordmittel, kein
 Code nötig:
@@ -87,84 +77,17 @@ Code nötig:
 4. Kann nach dem Anlegen bis zu ein paar Minuten dauern, bis die Statistik-Metadaten stehen
    (HA zeigt dazu eine gelbe, harmlose Warnung) — kein Fehler.
 
-Ende-zu-Ende gegen die echte Anlage getestet (alle drei Kategorien, inkl. Echtzeit-Leistung).
-
-**Warum keine fertigen kWh-Sensoren direkt aus der Integration?** Geprüft und bewusst so
-entschieden — passt zum Vorgehen vergleichbarer Integrationen: SolarEdge (Core) und
-[Anker Solix](https://github.com/thomluther/ha-anker-solix/discussions/16) (Solarbank/Batterie,
-dieselbe Situation wie hier) liefern ebenfalls nur vorzeichen-getrennte Leistungssensoren und
-verweisen für die kWh-Umwandlung auf HA's Integral-Helfer, statt selbst zu akkumulieren. Der
-Anker-Solix-Maintainer begründet das explizit: Integrationsentitäten direkt im Dashboard sind
-riskant (Historie bricht bei Integrationsänderungen, Wertspitzen korrumpieren Statistiken) —
-der Helfer entkoppelt die Statistik von der Integration. Eine eigene Akkumulation in
-`e3dc_modbus` müsste außerdem Neustart-sicher persistieren (`RestoreEntity`) und exakt HA's
-eigene Integrationsmethode nachbilden — dupliziert, was HA bereits zuverlässig löst, für
-zweifelhaften Gewinn.
-
-## Architektur
-
-- **`__init__.py`**: holt sich per `async_get_unit` eine geteilte Modbus-Unit von HA's
-  `modbus`-Integration, probet das Gerät (`E3DCDevice.async_probe`), startet den Coordinator.
-- **`coordinator.py`**: `DataUpdateCoordinator[None]` — pollt einmal pro Intervall
-  (`device.async_update()`), liefert selbst keine Daten zurück. Entities lesen live von
-  `entry.runtime_data.device.power.pv_power` etc., da `e3dc_modbus`s Blöcke bereits
-  mutable State sind (kein Zwischen-Dict nötig).
-- **`data.py`**: `entry.runtime_data` (aktuelles Pattern, nicht `hass.data[DOMAIN]`).
-- **`entity.py`**: gemeinsame `DeviceInfo` (Hersteller/Modell/Seriennummer/Firmware aus dem
-  Probe) für jede Entity.
-- **`config_flow.py`**: validiert mit `async_get_temporary_unit` (Context-Manager, gibt die
-  Verbindung nach der Prüfung wieder frei) — kein Entry entsteht, bevor das Gerät antwortet.
-  `unique_id` ist die Seriennummer, nicht Host/Port (Geräte-Identität bleibt stabil, auch
-  wenn sich die IP ändert).
-
-## Entwicklung
-
-```bash
-scripts/setup      # installiert e3dc-modbus (editable) + HA + Testabhängigkeiten
-scripts/lint        # ruff format + ruff check --fix
-pytest              # 5 Tests: Config Flow, Setup/Unload, gegen modbus_connection.mock
-scripts/develop     # startet eine echte HA-Instanz mit dieser Integration in ./config/
-```
-
-Devcontainer (`.devcontainer.json`) vorhanden — VS Code erkennt ihn automatisch und richtet
-Python/Ruff/Pytest ein.
-
-**Test-Instanz manuell starten** (ohne Devcontainer, z. B. gegen echte Hardware):
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements_test.txt -r requirements_dev.txt   # braucht ../e3dc-modbus als Sibling, siehe oben
-scripts/develop
-```
-
-Läuft standardmäßig auf Port 8123. Falls belegt: vor dem ersten Start
-`config/configuration.yaml` (wird bei Bedarf von `scripts/develop` angelegt) um einen Port
-ergänzen:
-
-```yaml
-http:
-  server_port: 8124
-```
-
-`config/` ist gitignored und enthält die echte lokale HA-Instanz inkl. Config-Entries —
-niemals committen (enthält Host/Seriennummer der echten Anlage).
-
-**Tests laufen ohne echte Hardware**: `tests/conftest.py`s `mock_e3dc_unit`-Fixture baut ein
-`modbus_connection.mock.MockModbusUnit`, das wie ein echtes E3DC antwortet.
-`test_config_flow.py` mockt nur `async_get_temporary_unit` (HA-Core-Code, nicht unserer);
-`test_init.py` fährt einen echten Config-Entry-Setup/Unload-Zyklus und prüft reale
-Entity-States danach.
+**Warum keine fertigen kWh-Sensoren direkt aus der Integration?** Bewusste Entscheidung,
+passend zum Vorgehen vergleichbarer Integrationen (SolarEdge, Anker Solix): eigene
+Akkumulation in der Integration ist riskant (Historie bricht bei Änderungen, Wertspitzen
+korrumpieren Statistiken) — HA's Integral-Helfer entkoppelt die Statistik davon und macht
+genau das schon zuverlässig.
 
 ## Bekannte Einschränkungen
 
 - **Wallbox-Schreibpfad unverifiziert.** E3DCs Doku verlangt Modbus-Funktion 05H für
   Bit-Schreibzugriffe, `modbus_connection`s `bit()`-Feld schreibt aber per 06H. Ohne echte
   Wallbox nicht zu klären — Rückmeldungen willkommen.
-- **`.github/workflows/ci.yml`/`validate.yml` laufen nur auf GitHub** (der
-  `e3dc-modbus`-Checkout in `ci.yml`, hassfest/HACS in `validate.yml`) — der Gitea-Spiegel
-  dieses Repos hat keine laufende CI. Bei Änderungen dort lokal mit `pytest`/`scripts/lint`
-  prüfen.
 - Nur S10 X Compact real getestet. Weitere Modelle: Modellprofil in `e3dc-modbus`s
   `models/` ergänzen, hier ändert sich nichts.
 
@@ -172,8 +95,11 @@ Entity-States danach.
 
 Icon/Logo unter `custom_components/e3dc_modbus/brand/` stammen von der offiziellen
 [E3DC-Website](https://www.e3dc.com) (HagerEnergy GmbH) und dienen ausschließlich der
-Wiedererkennung im HA-Frontend (Brands Proxy API, HA 2026.2+). Markenrechte liegen bei
-HagerEnergy GmbH.
+Wiedererkennung im HA-Frontend. Markenrechte liegen bei HagerEnergy GmbH.
+
+## Entwicklung
+
+Siehe [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Lizenz
 
