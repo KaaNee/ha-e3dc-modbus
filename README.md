@@ -129,6 +129,27 @@ scripts/develop     # startet eine echte HA-Instanz mit dieser Integration in ./
 Devcontainer (`.devcontainer.json`) vorhanden — VS Code erkennt ihn automatisch und richtet
 Python/Ruff/Pytest ein.
 
+**Test-Instanz manuell starten** (ohne Devcontainer, z. B. gegen echte Hardware):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements_test.txt -r requirements_dev.txt   # braucht ../e3dc-modbus als Sibling, siehe oben
+scripts/develop
+```
+
+Läuft standardmäßig auf Port 8123. Falls belegt: vor dem ersten Start
+`config/configuration.yaml` (wird bei Bedarf von `scripts/develop` angelegt) um einen Port
+ergänzen:
+
+```yaml
+http:
+  server_port: 8124
+```
+
+`config/` ist gitignored und enthält die echte lokale HA-Instanz inkl. Config-Entries —
+niemals committen (enthält Host/Seriennummer der echten Anlage).
+
 **Tests laufen ohne echte Hardware**: `tests/conftest.py`s `mock_e3dc_unit`-Fixture baut ein
 `modbus_connection.mock.MockModbusUnit`, das wie ein echtes E3DC antwortet.
 `test_config_flow.py` mockt nur `async_get_temporary_unit` (HA-Core-Code, nicht unserer);
