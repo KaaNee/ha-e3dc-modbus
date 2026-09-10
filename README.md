@@ -156,6 +156,13 @@ Entity-States danach.
 - Nur S10 X Compact real getestet. Weitere Modelle: Modellprofil in `e3dc-modbus`s
   `models/` ergänzen, hier ändert sich nichts.
 
+## Markenrechte
+
+Icon/Logo unter `custom_components/e3dc_modbus/brand/` stammen von der offiziellen
+[E3DC-Website](https://www.e3dc.com) (HagerEnergy GmbH) und dienen ausschließlich der
+Wiedererkennung im HA-Frontend (Brands Proxy API, HA 2026.2+). Markenrechte liegen bei
+HagerEnergy GmbH.
+
 ## Lizenz
 
 Apache-2.0, siehe `LICENSE`.
